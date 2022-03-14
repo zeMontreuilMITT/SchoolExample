@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using SchoolExample.Data;
 using SchoolExample.Models;
 using System.Diagnostics;
@@ -9,13 +10,16 @@ namespace SchoolExample.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _db;
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             _logger = logger;
             _db = db;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+ 
+        public async Task<IActionResult> Index()
         {
             return View();
         }

@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model SchoolExample.Models.Course
+
+<form asp-action="Create" method="post">
+    <div>
+        <label asp-for="AverageGrade"></label>
+        <input asp-for="AverageGrade" />
+        <span asp-validation-for="AverageGrade" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label asp-for="Title"></label>
+        <input asp-for="Title" type="text" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    
+    <button type="submit">Create</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

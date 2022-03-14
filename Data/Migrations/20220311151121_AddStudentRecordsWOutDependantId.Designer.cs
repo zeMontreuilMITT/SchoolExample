@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolExample.Data;
 
@@ -11,9 +12,10 @@ using SchoolExample.Data;
 namespace SchoolExample.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220311151121_AddStudentRecordsWOutDependantId")]
+    partial class AddStudentRecordsWOutDependantId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -232,44 +234,16 @@ namespace SchoolExample.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double?>("AverageGrade")
+                    b.Property<double>("AverageGrade")
                         .HasColumnType("float");
-
-                    b.Property<int>("CourseInfoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CourseInfoId");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("SchoolExample.Models.CourseInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CourseIntroduction")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DomesticDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InternationalDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CourseInfo");
                 });
 
             modelBuilder.Entity("SchoolExample.Models.Enrollment", b =>
@@ -307,15 +281,8 @@ namespace SchoolExample.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("IsDomestic")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("TotalHours")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -378,17 +345,6 @@ namespace SchoolExample.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("SchoolExample.Models.Course", b =>
-                {
-                    b.HasOne("SchoolExample.Models.CourseInfo", "CourseInfo")
-                        .WithMany()
-                        .HasForeignKey("CourseInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CourseInfo");
                 });
 
             modelBuilder.Entity("SchoolExample.Models.Enrollment", b =>

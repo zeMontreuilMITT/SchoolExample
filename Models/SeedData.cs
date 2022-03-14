@@ -42,6 +42,7 @@ namespace SchoolExample.Models
             {
                 var passwordHasher = new PasswordHasher<ApplicationUser>();
 
+                // New ADMIN
                 ApplicationUser firstAdmin = new ApplicationUser
                 {
                     Email = "admin1@mitt.ca",
@@ -56,6 +57,31 @@ namespace SchoolExample.Models
 
                 await userManager.CreateAsync(firstAdmin);
                 await userManager.AddToRoleAsync(firstAdmin, "Administrator");
+
+                // New STUDENT
+                ApplicationUser seedStudent = new ApplicationUser
+                {
+                    Email = "billy.Talent@mitt.ca",
+                    NormalizedEmail = "BILLY.TALENT@MITT.CA",
+                    UserName = "billy.Talent@mitt.ca",
+                    NormalizedUserName = "BILLY.TALENT@MITT.CA",
+                    EmailConfirmed = true
+                };
+
+                hashedPassword = passwordHasher.HashPassword(seedStudent, "P@ssword1");
+                seedStudent.PasswordHash = hashedPassword;
+
+                await userManager.CreateAsync(seedStudent);
+
+                seedStudent.StudentRecord = new StudentRecord {
+                    User = seedStudent,
+                    UserId = seedStudent.Id,
+                    Notes = "Made some pop punk albums in the mid 00's",
+                    IsDomestic = false,
+                    TotalHours = 300
+                };
+
+                await userManager.UpdateAsync(seedStudent);
             }
 
             context.SaveChanges();

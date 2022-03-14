@@ -12,5 +12,6 @@ namespace SchoolExample.Data
         }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Enrollment> Enrollments { get; set; }
+        public DbSet<StudentRecord> StudentRecords { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchoolExample.Data;
 
@@ -11,9 +12,10 @@ using SchoolExample.Data;
 namespace SchoolExample.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220311150816_AddStudentRecords")]
+    partial class AddStudentRecords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -204,6 +206,9 @@ namespace SchoolExample.Data.Migrations
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StudentRecordId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -221,6 +226,10 @@ namespace SchoolExample.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("StudentRecordId")
+                        .IsUnique()
+                        .HasFilter("[StudentRecordId] IS NOT NULL");
+
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
@@ -232,44 +241,16 @@ namespace SchoolExample.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<double?>("AverageGrade")
+                    b.Property<double>("AverageGrade")
                         .HasColumnType("float");
-
-                    b.Property<int>("CourseInfoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CourseInfoId");
 
                     b.ToTable("Courses");
-                });
-
-            modelBuilder.Entity("SchoolExample.Models.CourseInfo", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("CourseIntroduction")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DomesticDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("InternationalDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CourseInfo");
                 });
 
             modelBuilder.Entity("SchoolExample.Models.Enrollment", b =>
@@ -307,24 +288,14 @@ namespace SchoolExample.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<bool>("IsDomestic")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("TotalHours")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("StudentRecords");
                 });
@@ -380,15 +351,13 @@ namespace SchoolExample.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SchoolExample.Models.Course", b =>
+            modelBuilder.Entity("SchoolExample.Models.ApplicationUser", b =>
                 {
-                    b.HasOne("SchoolExample.Models.CourseInfo", "CourseInfo")
-                        .WithMany()
-                        .HasForeignKey("CourseInfoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("SchoolExample.Models.StudentRecord", "StudentRecord")
+                        .WithOne("User")
+                        .HasForeignKey("SchoolExample.Models.ApplicationUser", "StudentRecordId");
 
-                    b.Navigation("CourseInfo");
+                    b.Navigation("StudentRecord");
                 });
 
             modelBuilder.Entity("SchoolExample.Models.Enrollment", b =>
@@ -410,27 +379,20 @@ namespace SchoolExample.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SchoolExample.Models.StudentRecord", b =>
-                {
-                    b.HasOne("SchoolExample.Models.ApplicationUser", "User")
-                        .WithOne("StudentRecord")
-                        .HasForeignKey("SchoolExample.Models.StudentRecord", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("SchoolExample.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Enrollments");
-
-                    b.Navigation("StudentRecord");
                 });
 
             modelBuilder.Entity("SchoolExample.Models.Course", b =>
                 {
                     b.Navigation("Enrollments");
+                });
+
+            modelBuilder.Entity("SchoolExample.Models.StudentRecord", b =>
+                {
+                    b.Navigation("User")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
